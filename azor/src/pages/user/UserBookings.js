@@ -10,9 +10,12 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { Link } from "react-router-dom";
 import { useBookingsContext } from "../../components/hooks/useBookingsContext";
 import UserBookingPagination from "../../components/paginations/UserBookingPagination";
+import Spinner from "react-bootstrap/Spinner";
+import AddBookingBtn from "../../components/buttons/AddBookingBtn";
 
 const UserBookings = () => {
   const { bookings, dispatch } = useBookingsContext();
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [postPerPage, setPostPerPage] = useState(5);
   // const [lastPage, setLastPage] = useState(null);
@@ -30,6 +33,7 @@ const UserBookings = () => {
       // check if response is ok
       if (response.ok) {
         dispatch({ type: "SET_BOOKINGS", payload: json });
+        setLoading(false);
       }
     };
     fetchBookings();
@@ -38,10 +42,25 @@ const UserBookings = () => {
   const viewBooking = () => {};
   const editBooking = () => {};
 
+  const countBooking = () => {};
   return (
     <>
       <Container className="mt-3 border-bottom border-secondary">
-        <h1>My Appointments</h1>
+        {/* <Row className="mb-3">
+          <Col sm={12} lg={8}>
+            <h1>My Appointments</h1>
+          </Col>
+          <Col lg={4}>
+            <AddBookingBtn />
+          </Col>
+        </Row> */}
+        <div className="mb-3 d-flex flex-wrap">
+          <h1>My Appointments</h1>
+
+          <div className="ms-auto">
+            <AddBookingBtn />
+          </div>
+        </div>
       </Container>
 
       <Container className="my-3">
@@ -71,24 +90,36 @@ const UserBookings = () => {
             </Dropdown.Item>
           </DropdownButton>
         </InputGroup>
-        <Row>
-          <Col md={12}>
-            <div className="flex-column">
-              {bookings &&
-                bookings.map((booking) => (
-                  <BookingCard
-                    key={booking._id}
-                    booking={booking}
-                    viewBooking={viewBooking}
-                    editBooking={editBooking}
-                  />
-                ))}
-            </div>
-          </Col>
-        </Row>
-        <Container className="d-flex justify-content-center">
-          <UserBookingPagination />
-        </Container>
+        {loading ? (
+          <Spinner animation="border" variant="primary" size="lg" />
+        ) : (
+          <>
+            <Row>
+              <Col sm={12}>
+                <span>Total {countBooking()} bookings</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                <div className="flex-column">
+                  {bookings &&
+                    bookings.map((booking) => (
+                      <BookingCard
+                        key={booking._id}
+                        booking={booking}
+                        viewBooking={viewBooking}
+                        editBooking={editBooking}
+                      />
+                    ))}
+                </div>
+              </Col>
+            </Row>
+
+            <Container className="d-flex justify-content-center">
+              <UserBookingPagination />
+            </Container>
+          </>
+        )}
       </Container>
     </>
   );

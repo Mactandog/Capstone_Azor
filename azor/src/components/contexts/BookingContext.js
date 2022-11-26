@@ -8,11 +8,21 @@ export const bookingReducer = (state, action) => {
       return {
         bookings: action.payload,
       };
+    case "GET_BOOKING":
+      return {
+        bookings: action.payload,
+      };
     case "CREATE_BOOKING":
       return {
         bookings: [action.payload, ...state.bookings],
       };
     case "DELETE_BOOKING":
+      return {
+        bookings: state.bookings.filter(
+          (booking) => booking._id !== action.payload._id
+        ),
+      };
+    case "UPDATE_BOOKING":
       return {
         bookings: state.bookings.filter(
           (booking) => booking._id !== action.payload._id

@@ -4,10 +4,14 @@ import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Alert from "react-bootstrap/esm/Alert";
-// import { useBookingsContext } from "../hooks/useBookingsContext";
+import { useBookingsContext } from "../hooks/useBookingsContext";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UserBookServiceForm = () => {
-  //   const { dispatch } = useBookingsContext();
+  const { dispatch } = useBookingsContext();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [date, setDate] = useState("");
   const [time_slot, setTimeSlot] = useState("");
   const [brand, setBrand] = useState("");
@@ -17,10 +21,11 @@ const UserBookServiceForm = () => {
   const [remarks, setRemarks] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
+
   const stats = "Pending";
   const costs = 10000;
-
-  // const [selectedServices, setSelectedServices] = useState([]);
+  const createdAt = new Date().toISOString();
+  console.log(createdAt);
 
   // SELECTED SERVICES
   const handleSelect = (e) => {
@@ -31,6 +36,13 @@ const UserBookServiceForm = () => {
     );
   };
   // console.log(services);
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success me-3",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,19 +73,47 @@ const UserBookServiceForm = () => {
     }
 
     if (response.ok) {
-      setDate("");
-      setTimeSlot("");
-      setBrand("");
-      setModel("");
-      setRegNum("");
-      setServices([]);
-      setRemarks("");
-      setError(null);
-      setEmptyFields([]);
-      console.log("New booking added", json);
-      //   dispatch({ type: "CREATE_BOOKING", payload: json });
+      swalWithBootstrapButtons
+        .fire({
+          title: "Are you sure?",
+          text: "Make sure to review the appointment details before submitting!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, submit booking!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire(
+              "Appointment created!",
+              `You're now booked.`,
+              "success"
+            );
+            setDate("");
+            setTimeSlot("");
+            setBrand("");
+            setModel("");
+            setRegNum("");
+            setServices([]);
+            setRemarks("");
+            setError(null);
+            setEmptyFields([]);
+            dispatch({ type: "CREATE_BOOKING", payload: json });
+            navigate(`/account/user/${id}/bookings`);
+            // redirect_Page();
+            console.log("New booking added", json);
+          }
+        });
     }
   };
+
+  // let redirect_Page = () => {
+  //   let tID = setTimeout(function () {
+  //     window.location.href = `/account/user/${id}/bookings`;
+  //     window.clearTimeout(tID); // clear time out.
+  //   }, 1800);
+  // };
 
   const serviceList = [
     { id: 1, service_name: "Brakes" },
@@ -85,11 +125,8 @@ const UserBookServiceForm = () => {
 
   return (
     <>
+      {/* BOOKING FORM */}
       <Form onSubmit={handleSubmit}>
-        <Form.Label className="fs-3 mb-5">
-          To start your <span className="text-primary">booking</span>, please
-          provide all the required information.
-        </Form.Label>
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Row className="mb-3 mt-5">
@@ -258,8 +295,17 @@ const UserBookServiceForm = () => {
             placeholder="Message (Optional)"
           />
         </Form.Group>
-        <Button variant="primary" type="submit" size="lg">
+        <Button variant="primary" type="submit" size="md" className="me-4">
           Submit
+        </Button>
+        <Button
+          variant="outline-secondary"
+          size="md"
+          onClick={() => {
+            navigate(`/account/user/${id}/bookings`);
+          }}
+        >
+          Cancel
         </Button>
       </Form>
     </>

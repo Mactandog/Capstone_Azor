@@ -5,22 +5,80 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import { NavLink, useParams } from "react-router-dom";
+import { formatDistance, subDays } from "date-fns";
+import { useBookingsContext } from "../../hooks/useBookingsContext";
+import Swal from "sweetalert2";
 
 const BookingCard = ({ booking, viewBooking, editBooking }) => {
   //View Booking Modal
   const [showModal, setShowModal] = useState(false);
+  const { id } = useParams();
+  let bookdate = new Date(booking.date).toDateString();
 
+  const { dispatch } = useBookingsContext();
+
+  const deleteBooking = async () => {
+    const response = await fetch(`/api/bookings/${booking._id}`, {
+      method: "DELETE",
+    });
+    const json = await response.json();
+
+    if (response.ok) {
+      dispatch({ type: "DELETE_BOOKING", payload: json });
+    }
+  };
+
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger me-3",
+    },
+    buttonsStyling: false,
+  });
+
+  const handleDelete = () => {
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+        reverseButtons: true,
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire(
+            "Deleted!",
+            `Your appointment with Ref. Num. <strong>${booking._id}</strong> has been deleted.`,
+            "success"
+          );
+          deleteBooking();
+        } else if (
+          /* Read more about handling dismissals below */
+          result.dismiss === Swal.DismissReason.cancel
+        ) {
+          swalWithBootstrapButtons.fire(
+            "Cancelled",
+            "Appointment is not deleted",
+            "error"
+          );
+        }
+      });
+  };
   return (
     <>
       <Card
         className="border border-dark bg-white my-4"
-        style={{ borderRadius: 0 }}
+        style={{ borderRadius: "5px" }}
       >
         <Row>
           <Col sm={12} md={10}>
             <Card.Title className="px-3 mb-0">
               <h5
-                className="fw-semibold text-primary mb-0"
+                className="fw-semibold text-primary mb-0 fs-3"
                 style={{
                   display: "-webkit-box",
                   WebkitBoxOrient: "vertical",
@@ -29,9 +87,12 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
                 }}
               >
                 {`${booking.services}`}
-                asdasdasdsadasdasdasdasdasdasdasdasdasdasdasd
               </h5>
-              <small>{booking._id}</small>
+              <small className="text-muted">Reference Number:</small>
+              <br></br>
+              <small>
+                <b>{booking._id}</b>
+              </small>
             </Card.Title>
           </Col>
           <Col xs={{ order: 1 }} sm={12} md={2}>
@@ -56,15 +117,16 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
         <Card.Body className="py-0">
           <div className="border-bottom border-danger">
             <Row>
-              <Col sm={12} md={5}>
+              <Col sm={12} md={3}>
                 <span>Appointment Date:</span>
               </Col>
               <Col sm={12} md={6}>
-                <span className="fw-semibold">{booking.date}</span>
+                <span className="fw-semibold">{bookdate}</span>
               </Col>
             </Row>
+
             <Row className="mb-2">
-              <Col sm={12} md={5}>
+              <Col sm={12} md={3}>
                 <span>Time Slot:</span>
               </Col>
               <Col sm={12} md={6}>
@@ -120,7 +182,7 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
           </div>
           <br></br>
           <Button
-            variant="outline-primary"
+            variant="primary"
             size="sm"
             onClick={() => {
               setShowModal(true);
@@ -128,15 +190,26 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
           >
             More details
           </Button>{" "}
-          <Button variant="outline-info" size="sm" onClick={editBooking}>
+          <Button
+            as={NavLink}
+            to={`/account/user/${id}/bookings/update/${booking._id}`}
+            variant="outline-info"
+            size="sm"
+            onClick={editBooking}
+          >
             Edit
+          </Button>{" "}
+          <Button variant="outline-danger" size="sm" onClick={handleDelete}>
+            Delete
           </Button>
         </Card.Body>
         <span
           className="ms-auto mb-0"
           style={{ fontSize: ".75rem", fontStyle: "italic" }}
         >
-          {booking.updatedAt}
+          {formatDistance(subDays(new Date(booking.updatedAt), 0), new Date(), {
+            addSuffix: true,
+          })}
         </span>
         <span
           className="ms-auto mt-0 text-muted"
@@ -154,7 +227,16 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
         aria-labelledby="booking details"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="bookingDetails" className="text-primary">
+          <Modal.Title
+            id="bookingDetails"
+            className="text-primary"
+            style={{
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: "1",
+              overflow: "hidden",
+            }}
+          >
             {`${booking.services}`}
           </Modal.Title>
           <Badge
@@ -166,24 +248,27 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
                 ? "warning"
                 : "danger"
             }
-            className="ms-3"
+            className="mx-3"
           >
             {booking.stats}
           </Badge>
         </Modal.Header>
         <Modal.Body>
           <div className="border-bottom border-danger">
-            {booking._id}
-            <Row>
-              <Col sm={12} md={5}>
+            <span className="text-muted">Reference Number:</span>
+            <br></br>
+            <b>{booking._id}</b>
+
+            <Row className="mt-3">
+              <Col sm={12} md={3}>
                 <span>Appointment Date:</span>
               </Col>
               <Col sm={12} md={6}>
-                <span className="fw-semibold">{booking.date}</span>
+                <span className="fw-semibold">{bookdate}</span>
               </Col>
             </Row>
             <Row className="mb-2">
-              <Col sm={12} md={5}>
+              <Col sm={12} md={3}>
                 <span>Time Slot:</span>
               </Col>
               <Col sm={12} md={6}>
@@ -192,10 +277,13 @@ const BookingCard = ({ booking, viewBooking, editBooking }) => {
             </Row>
             <Row className="mb-2">
               <Col sm={12}>
-                <span>My Notes:</span>
+                <span>
+                  <b>My Notes:</b>
+                </span>
               </Col>
               <Col sm={12}>
-                <div className="border border-dark p-2">
+                {/* <div className="border border-dark p-2"> */}
+                <div className="p-2">
                   <span
                     style={{
                       fontSize: ".85rem",

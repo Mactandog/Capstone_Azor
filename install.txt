@@ -6,3 +6,9 @@ npm i node-sass
 
 >>> React Router
 npm install react-router-dom
+
+>>> Date-fns
+ npm install date-fns  
+
+ >>> SweetAlert
+ npm install sweetalert2

@@ -19,27 +19,32 @@ const ContactForm = () => {
           <Col as={Col} xs={12} sm={12} md={6} lg={6} xl={6}>
             <Form.Group controlId="firstName" className="mb-3">
               <Form.Label className="fs-5">First Name*</Form.Label>
-              <Form.Control type="text" placeholder="First name" />
+              <Form.Control type="text" placeholder="First name" required />
             </Form.Group>
 
             <Form.Group controlId="lastName" className="mb-3">
               <Form.Label className="fs-5">Last Name*</Form.Label>
-              <Form.Control type="text" placeholder="Last name" />
+              <Form.Control type="text" placeholder="Last name" required />
             </Form.Group>
 
             <Form.Group controlId="phone" className="mb-3">
               <Form.Label className="fs-5">Phone*</Form.Label>
-              <Form.Control type="text" placeholder="Phone" />
+              <Form.Control type="text" placeholder="Phone" required />
             </Form.Group>
 
             <Form.Group controlId="email" className="mb-3">
               <Form.Label className="fs-5">Email*</Form.Label>
-              <Form.Control type="email" placeholder="Email" />
+              <Form.Control type="email" placeholder="Email" required />
             </Form.Group>
           </Col>
           <Col as={Col} xs={12} sm={12} md={6} lg={6} xl={6}>
             <Form.Label className="fs-5">Message*</Form.Label>
-            <Form.Control as="textarea" rows={12} placeholder="Message" />
+            <Form.Control
+              as="textarea"
+              rows={12}
+              placeholder="Message"
+              required
+            />
           </Col>
         </Row>
         <div className="mb-2">

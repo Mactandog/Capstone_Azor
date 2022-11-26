@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../user/UserSideNavBar1.css";
-import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
+import { NavLink, Route, Routes, useParams } from "react-router-dom";
 import Tooltip from "react-bootstrap/Tooltip";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -9,6 +9,7 @@ import UserBookings from "./UserBookings";
 import UserSettings from "./UserSettings";
 import UserHistory from "./UserHistory";
 import CreateAppointment from "./CreateAppointment";
+import UserEditBooking from "./UserEditBooking";
 
 const UserLayout = () => {
   const { id } = useParams();
@@ -155,6 +156,10 @@ const UserLayout = () => {
             <Route path="history" element={<UserHistory />} />
             <Route path="settings" element={<UserSettings />} />
             <Route path="create-appointment" element={<CreateAppointment />} />
+            <Route
+              path="bookings/update/:bookingId"
+              element={<UserEditBooking />}
+            />
           </Routes>
         </div>
       </div>
