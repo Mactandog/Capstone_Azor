@@ -1,24 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/esm/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Stack from "react-bootstrap/Stack";
+import Alert from "react-bootstrap/Alert";
 import { Link } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
 
 const LoginForm = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login, error, loading } = useLogin();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    await login(email, password);
+  };
   return (
     <Card className="bg-white py-5 px-4">
       <h1 className="fs-1 fw-semibold text-center">Log in to Azor</h1>
       <h6 className="fs-6 mb-4 text-center">
         No more hassles with Motorcycle servicing and repairs.
       </h6>
-      <Form action="/account/user/:id">
+      {error && <Alert variant="danger">{error}</Alert>}
+      <Form onSubmit={handleSubmit}>
         <Form.Floating className="mb-3">
           <Form.Control
             id="email"
             name="email"
             type="email"
             placeholder="name@example.com"
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
           />
           <label htmlFor="email">Email address*</label>
         </Form.Floating>
@@ -28,6 +42,8 @@ const LoginForm = () => {
             name="password"
             type="password"
             placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
           />
           <label htmlFor="password">Password*</label>
         </Form.Floating>

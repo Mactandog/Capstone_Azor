@@ -1,8 +1,8 @@
 /* NX = not expanded */
 :root {
   --primary: #0091ff;
-  /* --dark: #061b28; */
-  --dark: #101010;
+  --dark: #363636;
+  /* --dark: #101010; */
   --red: #db042b;
   --gray: #756388;
   --light: #ffffff;
@@ -163,6 +163,7 @@
   margin: auto 20px;
   border-radius: 10px;
   position: relative;
+  line-height: 18px;
 }
 
 .menus-item-NX {

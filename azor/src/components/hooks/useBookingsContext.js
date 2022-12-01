@@ -1,4 +1,4 @@
-import { BookingContext } from "../contexts/BookingContext";
+import { BookingContext } from "../../contexts/BookingContext";
 import { useContext } from "react";
 
 export const useBookingsContext = () => {

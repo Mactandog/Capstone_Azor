@@ -10969,6 +10969,12 @@ body {
   line-height: 3rem;
 }
 
+@media screen and (max-width: 992px) {
+  .services-banner .hero-title {
+    font-size: 1.5rem;
+    line-height: 3rem;
+  }
+}
 .main-navbar {
   height: 5rem;
   border-bottom: 1px solid #dee2e6;
@@ -11002,7 +11008,8 @@ body {
   height: 100%;
   padding: 1.5rem;
   border-radius: var(--border-radius);
-  background: #f4f4f4;
+  background: rgb(203, 202, 202);
+  background: linear-gradient(0deg, rgb(203, 202, 202) 15%, rgba(218, 218, 218, 0.9388130252) 42%, rgb(237, 237, 237) 100%);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.03);
   position: relative;
 }
@@ -11015,6 +11022,7 @@ body {
   color: #101010;
   font-size: 1.5rem;
   height: 7rem;
+  text-align: center;
 }
 
 .card-service .card__title {
@@ -11065,6 +11073,63 @@ body {
   transform: translateX(3px);
 }
 
+.heading-phrase {
+  font-size: 2rem;
+}
+
+.service-container .img-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+}
+.service-container .img-container .service-img {
+  width: 100%;
+}
+.service-container .content-container {
+  display: flex;
+  align-items: center;
+}
+.service-container .content-container .text-container {
+  display: block;
+}
+.service-container .content-container .text-container .content {
+  line-height: 2.5rem;
+  text-align: justify;
+}
+
+@media screen and (min-width: 769px) {
+  .card-service .icon {
+    width: 4rem;
+  }
+  .card-service .card__content {
+    font-size: 1rem;
+  }
+  .card-service .card__title {
+    font-size: 1.2rem;
+  }
+}
+@media screen and (max-width: 768px) {
+  .card-service .icon {
+    width: 8rem;
+  }
+  .card-service .card__content {
+    font-size: 1.2rem;
+  }
+}
+@media screen and (max-width: 768px) {
+  .heading-phrase {
+    font-size: 2.2rem;
+  }
+  .service-container .content-container {
+    order: 2;
+  }
+}
+@media screen and (max-width: 992px) {
+  .service-container .content-container {
+    padding: 2rem 0;
+  }
+}
 div.error {
   padding: 10px;
   background: #ffefef;
@@ -11076,6 +11141,7 @@ div.error {
 
 input.error,
 select.error,
+textarea.error,
 .formGridCheckbox.error {
   border: 1px solid rgb(253, 37, 55);
 }
@@ -11083,4 +11149,21 @@ select.error,
 input,
 select {
   border: 1px solid rgb(22, 221, 112);
+}
+
+.widget {
+  border-top: 2px solid;
+  background-color: #f8f9fa;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+}
+.widget .stat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: White;
+  background-color: rgba(219, 4, 43, 0.8156862745);
+  font-size: 1.5rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
 }/*# sourceMappingURL=main.css.map */

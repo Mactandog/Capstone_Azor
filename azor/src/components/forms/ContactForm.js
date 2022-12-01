@@ -1,13 +1,90 @@
-import React from "react";
+import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import Alert from "react-bootstrap/Alert";
+import Swal from "sweetalert2";
 
 const ContactForm = () => {
+  const [first_name, setFirst_name] = useState("");
+  const [last_name, setLast_name] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState(null);
+  const [emptyFields, setEmptyFields] = useState([]);
+
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success me-3",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
+
+  const createInquiry = async () => {
+    const inquiry = {
+      first_name,
+      last_name,
+      email,
+      message,
+    };
+    console.log(inquiry);
+
+    const response = await fetch("/api/inquiries/create", {
+      method: "POST",
+      body: JSON.stringify(inquiry),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const json = await response.json();
+
+    if (!response.ok) {
+      console.log(json.error);
+      setError(json.error);
+      setEmptyFields(json.emptyFields);
+    }
+
+    if (response.ok) {
+      setFirst_name("");
+      setLast_name("");
+      setEmail("");
+      setMessage("");
+      console.log("Inquiry Submitted", inquiry);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // console.log(inquiry);
+
+    swalWithBootstrapButtons
+      .fire({
+        title: "Are you sure?",
+        text: "Make sure to review your details before submitting!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, submit inquiry!",
+      })
+      .then((result) => {
+        if (result.isConfirmed) {
+          swalWithBootstrapButtons.fire(
+            "Inquiry sent!",
+            `Thank you for sending us an inquiry. We'll update you via email regarding your inquiry.`,
+            "success"
+          );
+          createInquiry();
+        }
+      });
+  };
+
   return (
     <>
-      <Form className="mb-5">
+      <Form className="mb-5" onSubmit={handleSubmit}>
         <Form.Label className="fs-2 mt-5 fw-bold">
           Make a general enquiry
         </Form.Label>
@@ -19,22 +96,38 @@ const ContactForm = () => {
           <Col as={Col} xs={12} sm={12} md={6} lg={6} xl={6}>
             <Form.Group controlId="firstName" className="mb-3">
               <Form.Label className="fs-5">First Name*</Form.Label>
-              <Form.Control type="text" placeholder="First name" required />
+              <Form.Control
+                type="text"
+                placeholder="First name"
+                onChange={(e) => setFirst_name(e.target.value.trim())}
+                value={first_name}
+                className={emptyFields.includes("first_name") ? "error" : ""}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="lastName" className="mb-3">
               <Form.Label className="fs-5">Last Name*</Form.Label>
-              <Form.Control type="text" placeholder="Last name" required />
-            </Form.Group>
-
-            <Form.Group controlId="phone" className="mb-3">
-              <Form.Label className="fs-5">Phone*</Form.Label>
-              <Form.Control type="text" placeholder="Phone" required />
+              <Form.Control
+                type="text"
+                placeholder="Last name"
+                onChange={(e) => setLast_name(e.target.value.trim())}
+                value={last_name}
+                className={emptyFields.includes("last_name") ? "error" : ""}
+                required
+              />
             </Form.Group>
 
             <Form.Group controlId="email" className="mb-3">
               <Form.Label className="fs-5">Email*</Form.Label>
-              <Form.Control type="email" placeholder="Email" required />
+              <Form.Control
+                type="email"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value.trim())}
+                value={email}
+                className={emptyFields.includes("email") ? "error" : ""}
+                required
+              />
             </Form.Group>
           </Col>
           <Col as={Col} xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -43,8 +136,14 @@ const ContactForm = () => {
               as="textarea"
               rows={12}
               placeholder="Message"
+              onChange={(e) => setMessage(e.target.value.trim())}
+              value={message}
+              className={emptyFields.includes("message") ? "error" : ""}
               required
             />
+          </Col>
+          <Col as={Col} xs={12} sm={12} md={6} lg={6} xl={6}>
+            {error && <Alert variant="danger">{error}</Alert>}
           </Col>
         </Row>
         <div className="mb-2">

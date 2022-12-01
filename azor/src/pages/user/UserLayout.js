@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../user/UserSideNavBar1.css";
-import { NavLink, Route, Routes, useParams } from "react-router-dom";
+import {
+  Navigate,
+  NavLink,
+  Route,
+  Routes,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import Tooltip from "react-bootstrap/Tooltip";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -10,16 +17,29 @@ import UserSettings from "./UserSettings";
 import UserHistory from "./UserHistory";
 import CreateAppointment from "./CreateAppointment";
 import UserEditBooking from "./UserEditBooking";
+import UserChangePassword from "./UserChangePassword";
+import { useAuthContext } from "../../components/hooks/useAuthContext";
+import { useLogout } from "../../components/hooks/useLogout";
 
 const UserLayout = () => {
-  const { id } = useParams();
+  const { user } = useAuthContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSidebarShow, setIsSidebarShow] = useState(false);
-
+  const { logout } = useLogout();
+  const navigate = useNavigate();
   const windowSize = window.innerWidth;
 
   useEffect(() => {
     windowSize > 300 ? setIsSidebarShow(true) : setIsSidebarShow(false);
+  }, []);
+
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("user"));
+    if (items) {
+      setItems(items);
+    }
   }, []);
 
   const handleClick = () => {
@@ -30,6 +50,10 @@ const UserLayout = () => {
       : setIsExpanded(true);
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
   const menuItems = [
     {
       text: "Home",
@@ -39,16 +63,11 @@ const UserLayout = () => {
     {
       text: "My Appointments",
       path: "/bookings",
-      icon: "fa-solid fa-screwdriver-wrench",
+      icon: "fa-solid fa-calendar",
     },
     {
-      text: "History",
-      path: "/history",
-      icon: "fa-solid fa-clock-rotate-left",
-    },
-    {
-      text: "Settings",
-      path: "/settings",
+      text: "My Account",
+      path: "/account-settings",
       icon: "fa-solid fa-gear",
     },
   ];
@@ -104,7 +123,7 @@ const UserLayout = () => {
             >
               <NavLink
                 key={index}
-                to={`/account/user/${id}${item.path}`}
+                to={`/account${item.path}`}
                 className={
                   isExpanded ? "menus-item" : "menus-item menus-item-NX"
                 }
@@ -134,16 +153,24 @@ const UserLayout = () => {
         >
           <NavDropdown
             className="text-dark ms-auto dropdown"
-            title="Ryan Mark"
+            title={items?.email}
             id="basic-nav-dropdown"
           >
-            <NavDropdown.Item href={`/account/user/${id}/account-settings`}>
-              My Account
+            <NavDropdown.Item
+              as={Link}
+              to={`/account/account-settings`}
+              className="d-flex align-items-center"
+            >
+              <div className="me-auto">My Account</div>
+              <i className="fa-regular fa-user"></i>
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="/" className="d-flex align-items-center">
+            <NavDropdown.Item
+              onClick={handleLogout}
+              className="d-flex align-items-center"
+            >
               <div className="me-auto">Sign out</div>{" "}
-              <i className="fa-solid fa-right-from-bracket"></i>
+              <i className="fa-solid fa-right-from-bracket "></i>
             </NavDropdown.Item>
           </NavDropdown>
         </div>
@@ -151,14 +178,21 @@ const UserLayout = () => {
         {/* MAIN CONTENT */}
         <div className="main-content">
           <Routes>
-            <Route index element={<UserHome />} />
-            <Route path="bookings" element={<UserBookings />} />
+            <Route index element={user ? <UserHome /> : <Navigate to="/" />} />
+            <Route
+              path="bookings"
+              element={user ? <UserBookings /> : <Navigate to="/" />}
+            />
             <Route path="history" element={<UserHistory />} />
-            <Route path="settings" element={<UserSettings />} />
+            <Route path="account-settings" element={<UserSettings />} />
             <Route path="create-appointment" element={<CreateAppointment />} />
             <Route
               path="bookings/update/:bookingId"
               element={<UserEditBooking />}
+            />
+            <Route
+              path="account-settings/change-password"
+              element={<UserChangePassword />}
             />
           </Routes>
         </div>

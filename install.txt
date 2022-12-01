@@ -1,3 +1,5 @@
+>>>>>>>> REACT PROJECT  <<<<<<<<<<<<<
+
 >>> Bootstrap
 npm install bootstrap react-bootstrap
 
@@ -12,3 +14,28 @@ npm install react-router-dom
 
  >>> SweetAlert
  npm install sweetalert2
+
+
+>>>>>>>>> EXPRESS <<<<<<<<<<<
+
+>>> Express JS
+npm install express
+
+>>> Nodemon
+npm install nodemon
+
+>>> Dotenv
+npm install dotenv
+
+>>> Mongoose
+npm install mongoose
+
+>>> Bcrypt
+npm install bcrypt
+
+>>> JSON Web Token
+npm install jsonwebtoken
+
+>>> Validator
+npm install validator
+

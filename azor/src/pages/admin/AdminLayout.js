@@ -1,13 +1,53 @@
-import React, { useState } from "react";
-import "../admin/AdminSideNavBar.css";
-import { NavLink, Route, Routes, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import "./AdminSideNavBar2.css";
+import {
+  NavLink,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import Tooltip from "react-bootstrap/Tooltip";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import AdminHome from "./AdminHome";
+import AdminBookings from "./AdminBookings";
+import AdminCompleteBooking from "./AdminCompleteBooking";
+import AdminAddUser from "./AdminAddUser";
+import AdminAccountSettings from "./AdminAccountSettings";
+import { useLogout } from "../../components/hooks/useLogout";
+import { useAuthContext } from "../../components/hooks/useAuthContext";
+import AdminUserList from "./AdminUserList";
+import AdminInquires from "./AdminInquires";
 
-const AdminLayout = () => {
+const UserLayout = () => {
   const { id } = useParams();
+  const { user } = useAuthContext();
+
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isSidebarShow, setIsSidebarShow] = useState(false);
+  const { logout } = useLogout();
+  const navigate = useNavigate();
+
+  const windowSize = window.innerWidth;
+
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("user"));
+    if (items) {
+      setItems(items);
+    }
+  }, []);
+
+  const handleLogOut = () => {
+    logout();
+    navigate("/");
+  };
+
+  useEffect(() => {
+    windowSize > 300 ? setIsSidebarShow(true) : setIsSidebarShow(false);
+  }, []);
 
   const handleClick = () => {
     isExpanded
@@ -28,31 +68,49 @@ const AdminLayout = () => {
       path: "/bookings",
       icon: "fa-regular fa-calendar-check",
     },
+    // {
+    //   text: "Add Admin",
+    //   path: "/add-admin",
+    //   icon: "fa-solid fa-user-plus",
+    // },
     {
-      text: "History",
-      path: "/history",
-      icon: "fa-solid fa-clock-rotate-left",
+      text: "Users",
+      path: "/users-list",
+      icon: "fa-solid fa-users",
+    },
+    {
+      text: "Inquiries",
+      path: "/inquiries",
+      icon: "fa-solid fa-square-envelope",
     },
     {
       text: "Settings",
-      path: "/settings",
+      path: "/account-settings",
       icon: "fa-solid fa-gear",
     },
   ];
+
   return (
     <div className="main-container">
+      {/* SIDEBAR */}
       <div
         className={
           isExpanded
-            ? "side-nav-container"
-            : "side-nav-container side-nav-container-NX"
+            ? "admin-side-nav-container"
+            : "admin-side-nav-container admin-side-nav-container-NX"
         }
+        style={{ left: isSidebarShow ? "0" : "-240px" }}
       >
         <div className="nav-upper">
           <div className="nav-heading">
             {isExpanded && (
               <div className="nav-brand">
-                <h1>Azor</h1>
+                <NavLink
+                  to="/"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <h1>Azor</h1>
+                </NavLink>
               </div>
             )}
           </div>
@@ -67,6 +125,7 @@ const AdminLayout = () => {
             <span></span>
           </button>
         </div>
+
         <div className="nav-menus">
           {menuItems.map((item, index) => (
             <OverlayTrigger
@@ -83,7 +142,7 @@ const AdminLayout = () => {
             >
               <NavLink
                 key={index}
-                to={`/account/admin/${id}${item.path}`}
+                to={`/account${item.path}`}
                 className={
                   isExpanded ? "menus-item" : "menus-item menus-item-NX"
                 }
@@ -99,30 +158,56 @@ const AdminLayout = () => {
           ))}
         </div>
       </div>
+
+      {/* HEADER */}
       <div className="d-flex flex-column main-section">
-        <div className="navbar bg-light px-5" style={{ height: "10vh" }}>
+        <div
+          className="navbar bg-light"
+          style={{
+            width: "100%",
+            height: "10vh",
+            position: "fixed",
+            zIndex: 100,
+          }}
+        >
+          <h3 style={{ marginLeft: "6rem" }}>Admin</h3>
           <NavDropdown
-            className="text-dark ms-auto"
-            title="Ryan Mark"
+            className="text-dark ms-auto dropdown"
+            title={items?.email}
             id="basic-nav-dropdown"
           >
-            <NavDropdown.Item href={`/account/amin/${id}/account-settings`}>
+            <NavDropdown.Item href={`/account/account-settings`}>
               My Account
             </NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="/3.4" className="d-flex align-items-center">
+            <NavDropdown.Item
+              onClick={handleLogOut}
+              className="d-flex align-items-center"
+            >
               <div className="me-auto">Sign out</div>{" "}
               <i className="fa-solid fa-right-from-bracket"></i>
             </NavDropdown.Item>
           </NavDropdown>
         </div>
-        <Routes>
-          <Route index element={<h1>Hi</h1>} />
-          <Route path="bookings" element={<h1>Bookings</h1>} />
-        </Routes>
+
+        {/* MAIN CONTENT */}
+        <div className="main-content">
+          <Routes>
+            <Route index element={<AdminHome />} />
+            <Route exact path="bookings" element={<AdminBookings />} />
+            <Route
+              path="bookings/:bookingId/complete-booking"
+              element={<AdminCompleteBooking />}
+            />
+            {/* <Route path="add-admin" element={<AdminAddUser />} /> */}
+            <Route path="users-list" element={<AdminUserList />} />
+            <Route path="account-settings" element={<AdminAccountSettings />} />
+            <Route path="inquiries" element={<AdminInquires />} />
+          </Routes>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AdminLayout;
+export default UserLayout;

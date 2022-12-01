@@ -1,0 +1,256 @@
+/* NX = not expanded */
+:root {
+  --primary: #0091ff;
+  /* --dark: #061b28; */
+  --dark: #101010;
+  --red: #db042b;
+  --gray: #756388;
+  --light: #ffffff;
+}
+
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+
+.main-section {
+  width: 100vw;
+}
+
+.main-content {
+  margin-top: 10vh;
+}
+
+.admin-side-nav-container {
+  background-color: #101010;
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  color: var(--light);
+  z-index: 1000;
+  transition: 0.4s;
+}
+
+.admin-side-nav-container-NX {
+  width: 85px;
+}
+
+.nav-upper,
+.nav-heading,
+.nav-menus,
+.menus-item {
+  display: grid;
+}
+
+.nav-heading {
+  /* grid-template-columns: 2fr, 1fr;
+    grid-template-rows: 1fr; */
+  padding: 0 2rem;
+  align-items: center;
+  height: 85px;
+}
+
+/* .nav-brand {
+    width: 40px;
+    padding: 0 10px;
+  } */
+
+.hamburger {
+  position: absolute;
+  right: 51px;
+  top: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  margin: auto -35px;
+  /* background-color: var(--gray);
+    border: 2px solid var(--light); */
+  /* padding: 10px;
+    border-radius: 90px; */
+  height: 50px;
+  width: 53px;
+}
+
+.hamburger span {
+  display: block;
+  margin: auto;
+  margin-top: 5px;
+  background-color: var(--light);
+  border-radius: 15px;
+  height: 2px;
+  width: 20px;
+
+  transition: 0.4s;
+}
+
+/* HAMBURGER 2 */
+.hamburger2 {
+  position: absolute;
+  /* right: 51px; */
+  top: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  margin: auto -25px;
+  /* background-color: var(--gray);
+    border: 2px solid var(--light); */
+  /* padding: 10px;
+    border-radius: 90px; */
+  height: 50px;
+  width: 53px;
+}
+
+.hamburger2 span {
+  display: block;
+  margin: auto;
+  margin-top: 5px;
+  background-color: var(--dark);
+  border-radius: 15px;
+  height: 2px;
+  width: 20px;
+
+  transition: 0.4s;
+}
+
+/* HAMBURGER IN */
+.hamburger-in:hover span:nth-child(1) {
+  width: 20px;
+  transform: translate(-3px, 6px) rotate(30deg);
+}
+.hamburger-in:hover span:nth-child(2) {
+  display: none;
+}
+.hamburger-in:hover span:nth-child(3) {
+  width: 20px;
+  transform: translate(-3px, -6px) rotate(-30deg);
+}
+
+/* HAMBURGER OUT */
+.hamburger-out:hover span:nth-child(1) {
+  width: 20px;
+  transform: translate(0px, 6px) rotate(-30deg);
+}
+.hamburger-out:hover span:nth-child(2) {
+  display: none;
+}
+.hamburger-out:hover span:nth-child(3) {
+  width: 20px;
+  transform: translate(0px, -6px) rotate(30deg);
+}
+
+.hamburger:hover span,
+.hamburger2:hover span {
+  margin: auto;
+}
+
+.nav-menus {
+  grid-template-rows: repeat(7, 1fr);
+  margin-top: 5rem;
+  overflow-x: hidden;
+  row-gap: 1rem;
+}
+
+.menus-item {
+  height: 40px;
+  width: 12em;
+  display: flex;
+  align-items: center;
+  color: var(--light);
+  text-decoration: none;
+  margin: auto 20px;
+  border-radius: 10px;
+  position: relative;
+  line-height: 18px;
+}
+
+.menus-item-NX {
+  margin: auto;
+  width: 2.6em;
+}
+
+.menus-item span {
+  text-transform: capitalize;
+  margin-left: 30px;
+  align-self: center;
+}
+
+.menus-item:hover {
+  background-color: var(--light);
+  color: var(--red);
+  font-weight: 500;
+}
+
+.menus-item i {
+  width: 30px;
+  padding: 13px;
+}
+
+.tool-NX {
+  display: none;
+}
+
+.tool {
+  /* padding-left: 25px; */
+  right: 200px;
+}
+
+.admin-side-nav-container-show {
+  left: 240px;
+}
+
+@media screen and (min-width: 576px) {
+  .dropdown {
+    margin-right: 2rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .main-content {
+    margin-left: 85px;
+  }
+}
+
+@media screen and (min-width: 577px) and (max-width: 765px) {
+  .main-content {
+    margin-left: 50px;
+  }
+}
+@media screen and (max-width: 576px) {
+  .main-content {
+    margin-left: 50px;
+  }
+
+  .main-section {
+    width: 100vw;
+  }
+
+  .tool {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .admin-side-nav-container {
+    left: -240px;
+  }
+  .admin-side-nav-container-NX {
+    width: 50px;
+  }
+  .hamburger {
+    right: 35px;
+    top: 10px;
+  }
+  .admin-side-nav-container-show {
+    left: 240px;
+  }
+  .main-section {
+    width: 100vw;
+  }
+
+  .dropdown {
+    margin-right: 1rem;
+  }
+}

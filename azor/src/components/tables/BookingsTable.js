@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useBookingsContext } from "../hooks/useBookingsContext";
 
 const BookingsTable = () => {
   const { bookings, dispatch } = useBookingsContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const response = await fetch("/api/bookings"); // fetch data from the server
+      const response = await fetch("/api/bookings/admin", {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
 
       // check if response is ok

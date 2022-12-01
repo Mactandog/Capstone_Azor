@@ -8,8 +8,11 @@ import Spinner from "react-bootstrap/Spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { useBookingsContext } from "../hooks/useBookingsContext";
 import Swal from "sweetalert2";
+import { useAuthContext } from "../hooks/useAuthContext";
+import Services from "./Services";
 
 const EditBookingForm = () => {
+  const { user } = useAuthContext();
   const { dispatch } = useBookingsContext();
   const { id, bookingId } = useParams();
   const navigate = useNavigate();
@@ -23,18 +26,21 @@ const EditBookingForm = () => {
   const [reg_num, setRegNum] = useState("");
   const [services, setServices] = useState([]);
   const [remarks, setRemarks] = useState("");
-
+  const [costs, setTotalCost] = useState(0);
+  const [user_phone, setUser_phone] = useState("");
+  const [first_name, setFirst_name] = useState("");
+  const [last_name, setLast_name] = useState("");
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
-  const stats = "Pending";
-  const costs = 10000;
 
   console.log([date, time_slot, brand, model, services]);
 
   //GET BOOKING DETAILS
   useEffect(() => {
     const getBooking = async () => {
-      const response = await fetch(`/api/bookings/${bookingId}`); // fetch data from the server
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
 
       // check if response is ok
@@ -46,27 +52,50 @@ const EditBookingForm = () => {
         setModel(json.model);
         setRegNum(json.reg_num);
         setServices(json.services);
+        setTotalCost(parseInt(json.costs));
         setRemarks(json.remarks);
+        setFirst_name(json.first_name);
+        setLast_name(json.last_name);
+        setUser_phone(json.user_phone);
         setLoading(false);
       }
     };
-    getBooking();
-  }, []);
+    if (user) {
+      getBooking();
+    }
+  }, [user]);
 
   // let handleInput = (e) => {
   //   e.persist();
   //   setInputField({ ...inputField, [e.target.name]: e.target.value });
   // };
 
-  // SELECTED SERVICES
+  // // SELECTED SERVICES  -
+  // const handleSelect = (e) => {
+  //   const checked = e.target.checked;
+  //   const value = e.target.value;
+  //   setServices(
+  //     checked ? [...services, value] : services.filter((item) => item !== value)
+  //   );
+  // };
 
-  const handleSelect = (e) => {
+  // SELECTED SERVICES
+  const handleChange = (item, e) => {
     const checked = e.target.checked;
     const value = e.target.value;
     setServices(
-      checked ? [...services, value] : services.filter((item) => item !== value)
+      checked
+        ? [...services, value]
+        : services.filter((service) => service !== value)
     );
+    setTotalCost(
+      checked
+        ? (total) => total + parseInt(item.price)
+        : (total) => total - parseInt(item.price)
+    );
+    console.log(setTotalCost);
   };
+
   console.log(services);
 
   const swalWithBootstrapButtons = Swal.mixin({
@@ -77,35 +106,64 @@ const EditBookingForm = () => {
     buttonsStyling: false,
   });
 
-  const handleEdit = () => {
-    swalWithBootstrapButtons
-      .fire({
-        title: "Are you sure?",
-        text: "Please take note of the changes you are about to make!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, update it!",
-      })
-      .then((result) => {
-        if (result.isConfirmed) {
-          swalWithBootstrapButtons.fire(
-            "Updated!",
-            `Your appointment with Ref. Num. <strong>${bookingId}</strong> has been updated.`,
-            "success"
-          );
-          handleSubmit();
-        }
-      });
-  };
-
   const handleCancel = () => {
     swalWithBootstrapButtons.fire({ title: "No Changes were made!" });
-    navigate(`/account/user/${id}/bookings`);
+    navigate(`/account/bookings`);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!user) {
+      setError("You must be logged in!");
+      return;
+    }
+    console.log(emptyFields);
+    if (!date) {
+      setError("Date is required");
+    } else if (!time_slot) {
+      setError("Time Slot is required");
+    } else if (!user_phone) {
+      setError("Phone is required");
+    } else if (!brand) {
+      setError("Brand is required");
+    } else if (!model) {
+      setError("Model is required");
+    } else if (!reg_num) {
+      setError("Registration Number is required");
+    } else if (services.length === 0) {
+      emptyFields.push("services");
+      setError("Please choose a service");
+    } else {
+      swalWithBootstrapButtons
+        .fire({
+          title: "Are you sure?",
+          text: "Please take note of the changes you are about to make!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, update it!",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            swalWithBootstrapButtons.fire(
+              "Updated!",
+              `Your appointment with Ref. Num. <strong>${bookingId}</strong> has been updated.`,
+              "success"
+            );
+            updateMyBooking();
+          }
+        });
+    }
+  };
+
+  const updateMyBooking = async () => {
+    if (!user) {
+      setError("You must be logged in!");
+      return;
+    }
+
     const booking = {
       date,
       time_slot,
@@ -114,14 +172,18 @@ const EditBookingForm = () => {
       reg_num,
       services,
       remarks,
-      stats,
+      user_phone,
       costs,
     };
     console.log(booking);
+
     const response = await fetch(`/api/bookings/${bookingId}`, {
       method: "PATCH",
       body: JSON.stringify(booking),
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
     });
     const json = await response.json();
 
@@ -132,22 +194,28 @@ const EditBookingForm = () => {
     }
 
     if (response.ok) {
-      // setInputField([]);
       setServices([]);
       setError(null);
       setEmptyFields([]);
       console.log("Booking updated successfully", json);
-      dispatch({ type: "UPDATE_BOOKING", payload: json });
-      navigate(`/account/user/${id}/bookings`);
+      navigate(`/account/bookings`);
     }
   };
 
+  // const serviceList = [
+  //   { id: 1, service_name: "Brakes" },
+  //   { id: 2, service_name: "Change Oil" },
+  //   { id: 3, service_name: "Tires & Batteries" },
+  //   { id: 4, service_name: "Maintenance" },
+  //   { id: 5, service_name: "MOT" },
+  // ];
+
   const serviceList = [
-    { id: 1, service_name: "Brakes" },
-    { id: 2, service_name: "Change Oil" },
-    { id: 3, service_name: "Tires & Batteries" },
-    { id: 4, service_name: "Maintenance" },
-    { id: 5, service_name: "MOT" },
+    { id: 1, service_name: "Brakes", price: 500 },
+    { id: 2, service_name: "Change Oil", price: 1500 },
+    { id: 3, service_name: "Tires & Batteries", price: 300 },
+    { id: 4, service_name: "Maintenance", price: 3000 },
+    { id: 5, service_name: "MOT", price: 1500 },
   ];
 
   console.log(...(services === serviceList.service_name ? "checked" : ""));
@@ -156,10 +224,14 @@ const EditBookingForm = () => {
       {loading ? (
         <Spinner animation="border" variant="danger" size="lg" />
       ) : (
-        <Form onSubmit={handleSubmit} action={`/account/user/${id}/bookings`}>
+        <Form onSubmit={handleSubmit}>
+          <small>Name: </small>
+          <h4 className="text-primary">
+            {first_name} {last_name}
+          </h4>
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Row className="mb-3 mt-5">
+          <Row className="mb-3 mt-3">
             <Col sm={12}>Reference Number:</Col>
             <Col>
               <b>{bookingId}</b>
@@ -210,7 +282,26 @@ const EditBookingForm = () => {
               </Form.Select>
             </Form.Group>
           </Row>
-
+          <Row className="mb-3 ">
+            <Form.Group
+              as={Col}
+              md={6}
+              lg={6}
+              xl={6}
+              controlId="date"
+              className="mb-3 "
+            >
+              <Form.Label className="fs-5">Phone*</Form.Label>
+              <Form.Control
+                type="text"
+                name="user_phone"
+                placeholder="Phone"
+                onChange={(e) => setUser_phone(e.target.value)}
+                value={user_phone}
+                className={emptyFields.includes("user_phone") ? "error" : ""}
+              />
+            </Form.Group>
+          </Row>
           <Row>
             <Form.Group
               as={Col}
@@ -284,15 +375,34 @@ const EditBookingForm = () => {
                 </Form.Label>
               </Col>
               <Col sm={12} md={8}>
-                {serviceList.map((service) => (
+                {serviceList.map((item) => (
+                  // <Form.Check
+                  //   key={service.id}
+                  //   type="checkbox"
+                  //   name="services"
+                  //   value={service.service_name}
+                  //   onChange={handleSelect}
+                  //   label={service.service_name}
+                  //   checked={
+                  //     services.includes(service.service_name) ? true : false
+                  //   }
+                  // <Services
+                  //   key={item.id}
+                  //   value={item.service_name}
+                  //   handleChange={handleChange}
+                  //   label={item.service_name}
+                  //   item={item}
+                  // />
+
                   <Form.Check
-                    key={service.id}
+                    key={item.id}
                     type="checkbox"
-                    value={service.service_name}
-                    onChange={handleSelect}
-                    label={service.service_name}
+                    name={item.service_name}
+                    value={item.service_name}
+                    onChange={(event) => handleChange(item, event)}
+                    label={`${item.service_name} - ₱${item.price}`}
                     checked={
-                      services.includes(service.service_name) ? true : false
+                      services.includes(item.service_name) ? true : false
                     }
                   />
                 ))}
@@ -315,13 +425,7 @@ const EditBookingForm = () => {
               placeholder="Message (Optional)"
             />
           </Form.Group>
-          <Button
-            className="me-4"
-            variant="primary"
-            // type="submit"
-            size="md"
-            onClick={handleEdit}
-          >
+          <Button className="me-4" variant="primary" size="md" type="submit">
             Update
           </Button>
           <Button variant="outline-secondary" size="md" onClick={handleCancel}>

@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/esm/Button";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Alert from "react-bootstrap/esm/Alert";
 import { useBookingsContext } from "../hooks/useBookingsContext";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { useAuthContext } from "../hooks/useAuthContext";
+import Services from "./Services";
 
 const UserBookServiceForm = () => {
+  const { user } = useAuthContext();
   const { dispatch } = useBookingsContext();
-  const { id } = useParams();
   const navigate = useNavigate();
   const [date, setDate] = useState("");
   const [time_slot, setTimeSlot] = useState("");
@@ -19,22 +21,39 @@ const UserBookServiceForm = () => {
   const [reg_num, setRegNum] = useState("");
   const [services, setServices] = useState([]);
   const [remarks, setRemarks] = useState("");
+  const [user_phone, setUser_phone] = useState(user.phone);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
-
-  const stats = "Pending";
-  const costs = 10000;
-  const createdAt = new Date().toISOString();
-  console.log(createdAt);
+  const [costs, setTotalCost] = useState(0);
+  const first_name = user.fname;
+  const last_name = user.lname;
+  const mechanic_notes = "";
 
   // SELECTED SERVICES
-  const handleSelect = (e) => {
+  // const handleSelect = (e) => {
+  //   const checked = e.target.checked;
+  //   const value = e.target.value;
+  //   setServices(
+  //     checked ? [...services, value] : services.filter((item) => item !== value)
+  //   );
+  // };
+
+  // SELECTED SERVICES
+  const handleChange = (item, e) => {
     const checked = e.target.checked;
     const value = e.target.value;
     setServices(
       checked ? [...services, value] : services.filter((item) => item !== value)
     );
+    setTotalCost(
+      checked
+        ? (total) => total + parseInt(item.price)
+        : (total) => total - parseInt(item.price)
+    );
+    console.log(setTotalCost);
   };
+
+  console.log(services);
   // console.log(services);
   const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -47,32 +66,27 @@ const UserBookServiceForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const booking = {
-      date,
-      time_slot,
-      brand,
-      model,
-      reg_num,
-      services,
-      remarks,
-      stats,
-      costs,
-    };
-    console.log(booking);
-    const response = await fetch("/api/bookings", {
-      method: "POST",
-      body: JSON.stringify(booking),
-      headers: { "Content-Type": "application/json" },
-    });
-    const json = await response.json();
-
-    if (!response.ok) {
-      console.log(json.error);
-      setError(json.error);
-      setEmptyFields(json.emptyFields);
+    if (!user) {
+      setError("You must be logged in!");
+      return;
     }
-
-    if (response.ok) {
+    console.log(emptyFields);
+    if (!date) {
+      setError("Date is required");
+    } else if (!time_slot) {
+      setError("Time Slot is required");
+    } else if (!user_phone) {
+      setError("Phone is required");
+    } else if (!brand) {
+      setError("Brand is required");
+    } else if (!model) {
+      setError("Model is required");
+    } else if (!reg_num) {
+      setError("Registration Number is required");
+    } else if (services.length === 0) {
+      emptyFields.push("services");
+      setError("Please choose a service");
+    } else {
       swalWithBootstrapButtons
         .fire({
           title: "Are you sure?",
@@ -90,46 +104,91 @@ const UserBookServiceForm = () => {
               `You're now booked.`,
               "success"
             );
-            setDate("");
-            setTimeSlot("");
-            setBrand("");
-            setModel("");
-            setRegNum("");
-            setServices([]);
-            setRemarks("");
-            setError(null);
-            setEmptyFields([]);
-            dispatch({ type: "CREATE_BOOKING", payload: json });
-            navigate(`/account/user/${id}/bookings`);
-            // redirect_Page();
-            console.log("New booking added", json);
+            CreateBooking();
           }
         });
     }
+    // }
   };
 
-  // let redirect_Page = () => {
-  //   let tID = setTimeout(function () {
-  //     window.location.href = `/account/user/${id}/bookings`;
-  //     window.clearTimeout(tID); // clear time out.
-  //   }, 1800);
-  // };
+  const CreateBooking = async () => {
+    const booking = {
+      date,
+      time_slot,
+      brand,
+      model,
+      reg_num,
+      services,
+      remarks,
+      costs,
+      user_phone,
+      mechanic_notes,
+      first_name,
+      last_name,
+    };
+    console.log(booking);
+
+    const response = await fetch("/api/bookings", {
+      method: "POST",
+      body: JSON.stringify(booking),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+    const json = await response.json();
+
+    if (!response.ok) {
+      console.log(json.error);
+      setError(json.error);
+      setEmptyFields(json.emptyFields);
+    }
+
+    if (response.ok) {
+      setDate("");
+      setTimeSlot("");
+      setUser_phone("");
+      setBrand("");
+      setModel("");
+      setRegNum("");
+      setServices([]);
+      setRemarks("");
+      setError(null);
+      setEmptyFields([]);
+      dispatch({ type: "CREATE_BOOKING", payload: json });
+      navigate(`/account/bookings`);
+      console.log("New booking added", json);
+      // console.log(json);
+    }
+  };
+
+  // const serviceList = [
+  //   { id: 1, service_name: "Brakes" },
+  //   { id: 2, service_name: "Change Oil" },
+  //   { id: 3, service_name: "Tires & Batteries" },
+  //   { id: 4, service_name: "Maintenance" },
+  //   { id: 5, service_name: "MOT" },
+  // ];
 
   const serviceList = [
-    { id: 1, service_name: "Brakes" },
-    { id: 2, service_name: "Change Oil" },
-    { id: 3, service_name: "Tires & Batteries" },
-    { id: 4, service_name: "Maintenance" },
-    { id: 5, service_name: "MOT" },
+    { id: 1, service_name: "Brakes", price: 500 },
+    { id: 2, service_name: "Change Oil", price: 1500 },
+    { id: 3, service_name: "Tires & Batteries", price: 300 },
+    { id: 4, service_name: "Maintenance", price: 3000 },
+    { id: 5, service_name: "MOT", price: 1500 },
   ];
 
   return (
     <>
       {/* BOOKING FORM */}
       <Form onSubmit={handleSubmit}>
+        <small>Name: </small>
+        <h4 className="text-primary">
+          {user.fname} {user.lname}
+        </h4>
         {error && <Alert variant="danger">{error}</Alert>}
 
-        <Row className="mb-3 mt-5">
+        <Row className="mb-3 mt-3">
           <Form.Group
             as={Col}
             md={6}
@@ -174,7 +233,26 @@ const UserBookServiceForm = () => {
             </Form.Select>
           </Form.Group>
         </Row>
-
+        <Row className="mb-3 ">
+          <Form.Group
+            as={Col}
+            md={6}
+            lg={6}
+            xl={6}
+            controlId="date"
+            className="mb-3 "
+          >
+            <Form.Label className="fs-5">Phone*</Form.Label>
+            <Form.Control
+              type="text"
+              name="user_phone"
+              placeholder="Phone"
+              onChange={(e) => setUser_phone(e.target.value)}
+              value={user_phone}
+              className={emptyFields.includes("user_phone") ? "error" : ""}
+            />
+          </Form.Group>
+        </Row>
         <Row>
           <Form.Group
             as={Col}
@@ -247,35 +325,28 @@ const UserBookServiceForm = () => {
                 Which type of service would you like to book?*
               </Form.Label>
             </Col>
-            <Col sm={12} md={8}>
+            {/* <Col sm={12} md={8}>
               {serviceList.map((service) => (
                 <Form.Check
                   key={service.id}
                   type="checkbox"
+                  name="services"
                   value={service.service_name}
-                  onChange={handleSelect}
+                  onChange={handleChange}
                   label={service.service_name}
                 />
               ))}
-
-              {/* <Form.Check
-                type="checkbox"
-                id="oil_change"
-                name="oil_change"
-                label="Oil Change"
-              />
-              <Form.Check
-                type="checkbox"
-                id="tires_battery"
-                name="tires_battery"
-                label="Tires & Batteries"
-              />
-              <Form.Check
-                type="checkbox"
-                id="maintenance"
-                name="maintenance"
-                label="Maintenance"
-              /> */}
+            </Col> */}
+            <Col sm={12} md={8}>
+              {serviceList.map((item) => (
+                <Services
+                  key={item.id}
+                  value={item.service_name}
+                  handleChange={handleChange}
+                  label={item.service_name}
+                  item={item}
+                />
+              ))}
             </Col>
             <Col sm={12} md={4}>
               Total Cost:{" "}
@@ -295,14 +366,20 @@ const UserBookServiceForm = () => {
             placeholder="Message (Optional)"
           />
         </Form.Group>
-        <Button variant="primary" type="submit" size="md" className="me-4">
+        <Button
+          variant="primary"
+          size="md"
+          className="me-4"
+          type="submit"
+          // onClick={handleSubmit}
+        >
           Submit
         </Button>
         <Button
           variant="outline-secondary"
           size="md"
           onClick={() => {
-            navigate(`/account/user/${id}/bookings`);
+            navigate(`/account/bookings`);
           }}
         >
           Cancel

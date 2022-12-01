@@ -2,7 +2,9 @@ const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-const bookingRoutes = require("./routes/bookings");
+const bookingRoutes = require("./routes/bookingsRoutes");
+const userRoutes = require("./routes/userRoutes");
+const customerInquiryRoutes = require("./routes/customerInquiryRoutes");
 
 // EXPRESS APP
 const app = express();
@@ -17,13 +19,15 @@ app.use((req, res, next) => {
 
 // ROUTES
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/inquiries", customerInquiryRoutes);
 
 // CONNECT TO MONGO DB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     // Listen to port
-    app.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT || 2023, () => {
       console.log("listening on port", process.env.PORT);
     });
   })

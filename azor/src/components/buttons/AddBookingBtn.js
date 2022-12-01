@@ -6,7 +6,7 @@ const AddBookingBtn = () => {
   const { id } = useParams();
   return (
     <>
-      <Button as={Link} to={`/account/user/${id}/create-appointment`} size="lg">
+      <Button as={Link} to={`/account/create-appointment`} size="lg">
         <i className="fa-solid fa-calendar-plus"></i> Book an appointment
       </Button>
     </>

@@ -1,10 +1,44 @@
 import React from "react";
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import { useAuthContext } from "../../components/hooks/useAuthContext";
 
 const Services = (props) => {
+  const { user } = useAuthContext();
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
+  });
+
+  const handleClick = () => {
+    if (user.isAdmin === true) {
+      return Toast.fire({
+        icon: "warning",
+        title:
+          "Sorry, you're not authorized! Only basic users can book an appointment.",
+      });
+    }
+  };
   return (
-    <Link to="#" className="services-card-link">
+    <Link
+      to={
+        user && user.isAdmin === false
+          ? "/account/create-appointment"
+          : user && user.isAdmin === true
+          ? "#"
+          : "/login"
+      }
+      className="services-card-link"
+      onClick={handleClick}
+    >
       <div className="card-service pb-5">
         <h3 className="card__title">{props.title}</h3>
         <div className="text-center">

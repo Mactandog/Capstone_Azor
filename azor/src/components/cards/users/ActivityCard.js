@@ -13,7 +13,7 @@ function ActivityCard({ booking }) {
   return (
     <>
       <Card bg="light" text="dark" className=" mb-3 border-dark">
-        <Card.Header>
+        <Card.Header className="d-flex">
           <Badge
             pill
             bg={
@@ -32,31 +32,35 @@ function ActivityCard({ booking }) {
           <Card.Title className="text-primary">
             {booking.brand} {booking.model}
           </Card.Title>
-          <Card.Text>
+          <Card.Text className="d-flex flex-column">
             <small>Appointment Date: </small>
-            <p>
+            <span>
               <b>
                 {bookdate} - {booking.time_slot}
               </b>
-            </p>
-            <Button
-              size="sm"
-              className="me-2"
-              onClick={() => {
-                setShowModal(true);
-              }}
-            >
-              View
-            </Button>
+            </span>
+          </Card.Text>
+          <Button
+            size="sm"
+            className="me-2"
+            onClick={() => {
+              setShowModal(true);
+            }}
+          >
+            View
+          </Button>
+          {booking.stats === "Pending" ? (
             <Button
               size="sm"
               variant="outline-info"
               as={Link}
-              to={`/account/user/${id}/bookings/update/${booking._id}`}
+              to={`/account/bookings/update/${booking._id}`}
             >
-              EDit
+              Edit
             </Button>
-          </Card.Text>
+          ) : (
+            ""
+          )}
         </Card.Body>
         <Card.Footer>
           <small>

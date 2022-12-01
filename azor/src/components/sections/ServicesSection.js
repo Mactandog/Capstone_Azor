@@ -9,38 +9,39 @@ import Maintenance from "../../assets/media/icons/maintenance.png";
 
 const ServicesSection = () => {
   return (
-    <div className="my-5">
-      <div className="text-center p-5">
-        <h2>
-          Azor’s core services include the most basic of motorcycle maintenance,
-          all of which are critical to your motorcycle’s performance.
+    <div style={{ marginBottom: "10rem" }}>
+      <div className="text-center" style={{ margin: "10rem 0" }}>
+        <h2 className="heading-phrase">
+          <span className="text-primary ">Azor’s</span> core services include
+          the most basic of motorcycle maintenance, all of which are critical to
+          your motorcycle’s performance.
         </h2>
       </div>
       <Row className="mb-5 g-5">
-        <Col md={12} lg={6}>
+        <Col sm={12} md={6} lg={3}>
           <Services
             title="Brakes"
             img={Break}
             heading="The foremost area of safety, Azor offers brake pads, shoes and other brakes services."
           />
         </Col>
-        <Col md={12} lg={6}>
+        <Col sm={12} md={6} lg={3}>
           <Services
             title="Oil Change"
             img={ChangeOil}
             heading="Get the fastest Oil Change job done right before your eyes!"
           />
         </Col>
-      </Row>
-      <Row className="mb-5 g-5">
-        <Col md={12} lg={6}>
+        {/* </Row>
+      <Row className="mb-5 g-5"> */}
+        <Col sm={12} md={6} lg={3}>
           <Services
             title="Tires & Batteries"
             img={Tires}
-            heading="Your motorcycle’s body and soul. We’ll make sure you’ll get the best tires and batteries fit for your motorcycle brand."
+            heading="We’ll make sure you’ll get the best tires and batteries fit for your motorcycle brand."
           />
         </Col>
-        <Col md={12} lg={6}>
+        <Col sm={12} md={6} lg={3}>
           <Services
             title="Maintenance"
             img={Maintenance}

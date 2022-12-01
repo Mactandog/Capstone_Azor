@@ -9,11 +9,9 @@ const Home = () => {
     <>
       <div className="bg-white">
         <HeroBanner />
-
         <Container>
           <ServicesSection />
         </Container>
-
         <WhyBook />
       </div>
     </>

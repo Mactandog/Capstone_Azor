@@ -24,3 +24,12 @@
     line-height: 3rem;
   }
 }
+
+@media screen and(max-width: 992px) {
+  .services-banner {
+    .hero-title {
+      font-size: 1.5rem;
+      line-height: 3rem;
+    }
+  }
+}

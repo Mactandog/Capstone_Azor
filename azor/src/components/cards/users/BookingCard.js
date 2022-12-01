@@ -4,23 +4,30 @@ import Badge from "react-bootstrap/Badge";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Button from "react-bootstrap/Button";
-import { NavLink, useParams } from "react-router-dom";
-import { formatDistance, subDays } from "date-fns";
+import { NavLink } from "react-router-dom";
 import { useBookingsContext } from "../../hooks/useBookingsContext";
 import Swal from "sweetalert2";
 import ViewBookingModal from "../../modals/ViewBookingModal";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const BookingCard = ({ booking, editBooking }) => {
+  const { user } = useAuthContext();
+
   //View Booking Modal
   const [showModal, setShowModal] = useState(false);
-  const { id } = useParams();
   let bookdate = new Date(booking.date).toDateString();
+  let dateCreated = new Date(booking.createdAt).toDateString();
 
   const { dispatch } = useBookingsContext();
 
   const deleteBooking = async () => {
+    if (!user) {
+      return;
+    }
+
     const response = await fetch(`/api/bookings/${booking._id}`, {
       method: "DELETE",
+      headers: { Authorization: `Bearer ${user.token}` },
     });
     const json = await response.json();
 
@@ -62,19 +69,20 @@ const BookingCard = ({ booking, editBooking }) => {
         ) {
           swalWithBootstrapButtons.fire(
             "Cancelled",
-            "Appointment is not deleted",
+            "Your appointment record is safe!",
             "error"
           );
         }
       });
   };
+
   return (
     <>
       <Card
         className="border border-dark bg-white my-4"
-        style={{ borderRadius: "5px", padding: "1.5rem" }}
+        style={{ borderRadius: "5px" }}
       >
-        <Row>
+        <Row style={{ padding: "1.5rem" }}>
           <Col sm={12} md={10}>
             <Card.Title className="px-3 mb-0">
               <h5
@@ -88,6 +96,8 @@ const BookingCard = ({ booking, editBooking }) => {
               >
                 {booking.brand} - {booking.model}
               </h5>
+
+              <br></br>
               <small className="text-muted">Reference Number:</small>
               <br></br>
               <small>
@@ -116,7 +126,7 @@ const BookingCard = ({ booking, editBooking }) => {
           </Col>
         </Row>
 
-        <Card.Body className="py-0 mt-4">
+        <Card.Body className="py-0 my-4 " style={{ padding: "2.5rem" }}>
           <div className="border-bottom border-danger">
             <Row>
               <Col sm={12} md={3}>
@@ -177,10 +187,9 @@ const BookingCard = ({ booking, editBooking }) => {
                     overflow: "hidden",
                   }}
                 >
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  ex exercitationem molestiae maiores laboriosam, at nemo, neque
-                  numquam dolor voluptatibus earum vel nobis cumque dolore
-                  perferendis voluptatum! Architecto, molestiae repellat?
+                  {booking.mechanic_notes
+                    ? booking.mechanic_notes
+                    : "No other notes from the mechanic in-charge"}
                 </span>
               </Col>
             </Row>
@@ -195,33 +204,44 @@ const BookingCard = ({ booking, editBooking }) => {
           >
             More details
           </Button>{" "}
-          <Button
-            as={NavLink}
-            to={`/account/user/${id}/bookings/update/${booking._id}`}
-            variant="outline-info"
-            size="sm"
-            onClick={editBooking}
-          >
-            Edit
-          </Button>{" "}
+          {booking.stats === "Pending" ? (
+            <Button
+              as={NavLink}
+              to={`/account/bookings/update/${booking._id}`}
+              variant="outline-info"
+              size="sm"
+              onClick={editBooking}
+            >
+              <i className="fa-solid fa-pen-to-square"></i>
+            </Button>
+          ) : (
+            ""
+          )}{" "}
           <Button variant="outline-danger" size="sm" onClick={handleDelete}>
-            Delete
+            <i className="fa-solid fa-trash-can"></i>
           </Button>
         </Card.Body>
-        <span
-          className="ms-auto mb-0"
-          style={{ fontSize: ".75rem", fontStyle: "italic" }}
-        >
-          {formatDistance(subDays(new Date(booking.updatedAt), 0), new Date(), {
-            addSuffix: true,
-          })}
-        </span>
-        <span
-          className="ms-auto mt-0 text-muted"
-          style={{ fontSize: ".70rem", fontStyle: "italic" }}
-        >
-          Last updated
-        </span>
+        <Card.Footer className="d-flex flex-column">
+          <span
+            className="ms-auto mb-0"
+            style={{ fontSize: ".75rem", fontStyle: "italic" }}
+          >
+            {dateCreated}
+            {/* {formatDistance(
+              subDays(new Date(booking.createdAt), 0),
+              new Date(),
+              {
+                addSuffix: true,
+              }
+            )} */}
+          </span>
+          <span
+            className="ms-auto mt-0 text-muted"
+            style={{ fontSize: ".70rem", fontStyle: "italic" }}
+          >
+            Date Created
+          </span>
+        </Card.Footer>
       </Card>
 
       <ViewBookingModal
@@ -229,6 +249,7 @@ const BookingCard = ({ booking, editBooking }) => {
         setShowModal={setShowModal}
         booking={booking}
         bookdate={bookdate}
+        user={user}
       />
     </>
   );
