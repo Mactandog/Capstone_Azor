@@ -8,6 +8,7 @@ import { useBookingsContext } from "../hooks/useBookingsContext";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuthContext } from "../hooks/useAuthContext";
+import Services from "./Services"
 
 const UserBookServiceForm = () => {
   const { user } = useAuthContext();
@@ -23,19 +24,27 @@ const UserBookServiceForm = () => {
   const [user_phone, setUser_phone] = useState(user.phone);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
-  const costs = 10000;
+  // const [orderedService, setOrderedService] = useState([]);
+  const [costs, setTotalCost] = useState(0);
   const first_name = user.fname;
   const last_name = user.lname;
   const mechanic_notes = "";
 
+  /// MAAAIN REPO
+
   // SELECTED SERVICES
-  const handleSelect = (e) => {
-    const checked = e.target.checked;
-    const value = e.target.value;
-    setServices(
-      checked ? [...services, value] : services.filter((item) => item !== value)
-    );
-  };
+    const handleChange = (item, e) => {
+      const checked = e.target.checked;
+      const value = e.target.value;
+      setServices(
+        checked ? [...services, value] : services.filter((item) => item !== value)
+      );
+      setTotalCost(
+        checked ? (total) => total + parseInt(item.price) : (total) => total - parseInt(item.price)
+      );
+      console.log(setTotalCost)
+
+    };
 
   console.log(services);
   // console.log(services);
@@ -147,11 +156,11 @@ const UserBookServiceForm = () => {
   };
 
   const serviceList = [
-    { id: 1, service_name: "Brakes" },
-    { id: 2, service_name: "Change Oil" },
-    { id: 3, service_name: "Tires & Batteries" },
-    { id: 4, service_name: "Maintenance" },
-    { id: 5, service_name: "MOT" },
+    { id: 1, service_name: "Brakes", price: 500 },
+    { id: 2, service_name: "Change Oil", price: 1500 },
+    { id: 3, service_name: "Tires & Batteries", price: 300 },
+    { id: 4, service_name: "Maintenance", price: 3000 },
+    { id: 5, service_name: "MOT", price: 1500 },
   ];
 
   return (
@@ -302,14 +311,13 @@ const UserBookServiceForm = () => {
               </Form.Label>
             </Col>
             <Col sm={12} md={8}>
-              {serviceList.map((service) => (
-                <Form.Check
-                  key={service.id}
-                  type="checkbox"
-                  name="services"
-                  value={service.service_name}
-                  onChange={handleSelect}
-                  label={service.service_name}
+            {serviceList.map((item) => (
+                <Services
+                  key={item.id}
+                  value={item.service_name}
+                  handleChange={handleChange}
+                  label={item.service_name}
+                  item={item}
                 />
               ))}
             </Col>
