@@ -186,7 +186,7 @@ const ViewBookingModal = ({ showModal, setShowModal, booking, bookdate }) => {
             <Row className="mb-2">
               <Col sm={12} className="mb-3">
                 <span>Estimated Cost: </span>
-                <b>{booking.costs}</b>
+                <b>Php {booking.costs}</b>
               </Col>
               <Col sm={12}>
                 <span>Mechanic Notes:</span>

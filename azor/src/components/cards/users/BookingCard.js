@@ -12,6 +12,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 const BookingCard = ({ booking, editBooking }) => {
   const { user } = useAuthContext();
+
   //View Booking Modal
   const [showModal, setShowModal] = useState(false);
   let bookdate = new Date(booking.date).toDateString();
@@ -95,7 +96,7 @@ const BookingCard = ({ booking, editBooking }) => {
               >
                 {booking.brand} - {booking.model}
               </h5>
-              {/* <small>user id: {booking.user_id}</small> */}
+
               <br></br>
               <small className="text-muted">Reference Number:</small>
               <br></br>
@@ -186,10 +187,9 @@ const BookingCard = ({ booking, editBooking }) => {
                     overflow: "hidden",
                   }}
                 >
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ab
-                  ex exercitationem molestiae maiores laboriosam, at nemo, neque
-                  numquam dolor voluptatibus earum vel nobis cumque dolore
-                  perferendis voluptatum! Architecto, molestiae repellat?
+                  {booking.mechanic_notes
+                    ? booking.mechanic_notes
+                    : "No other notes from the mechanic in-charge"}
                 </span>
               </Col>
             </Row>

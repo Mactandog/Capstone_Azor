@@ -19,10 +19,13 @@ npm install react-router-dom
 >>>>>>>>> EXPRESS <<<<<<<<<<<
 
 >>> Express JS
-npm install Express
+npm install express
+
+>>> Nodemon
+npm install nodemon
 
 >>> Dotenv
-npm install Dotenv
+npm install dotenv
 
 >>> Mongoose
 npm install mongoose

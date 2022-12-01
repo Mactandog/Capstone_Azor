@@ -68,11 +68,11 @@ const UserLayout = () => {
       path: "/bookings",
       icon: "fa-regular fa-calendar-check",
     },
-    {
-      text: "Add Admin",
-      path: "/add-admin",
-      icon: "fa-solid fa-user-plus",
-    },
+    // {
+    //   text: "Add Admin",
+    //   path: "/add-admin",
+    //   icon: "fa-solid fa-user-plus",
+    // },
     {
       text: "Users",
       path: "/users-list",
@@ -199,7 +199,7 @@ const UserLayout = () => {
               path="bookings/:bookingId/complete-booking"
               element={<AdminCompleteBooking />}
             />
-            <Route path="add-admin" element={<AdminAddUser />} />
+            {/* <Route path="add-admin" element={<AdminAddUser />} /> */}
             <Route path="users-list" element={<AdminUserList />} />
             <Route path="account-settings" element={<AdminAccountSettings />} />
             <Route path="inquiries" element={<AdminInquires />} />

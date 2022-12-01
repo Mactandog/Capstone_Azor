@@ -12,7 +12,7 @@ const AdminUserList = () => {
     <>
       <Container className="mt-3 border-bottom border-secondary ">
         <h1>
-          <i className="fa-solid fa-users text-primary"></i> List of Admin Users
+          <i className="fa-solid fa-users text-primary"></i> List of Users
         </h1>
       </Container>
       <Container className="my-5">

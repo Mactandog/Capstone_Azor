@@ -83,6 +83,7 @@ const AdminBookingsTable = () => {
         <Table hover responsive variant="light">
           <thead>
             <tr>
+              <th>Reference Number</th>
               <th>First Name</th>
               <th>Date</th>
               <th>Time Slot</th>

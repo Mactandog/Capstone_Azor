@@ -29,7 +29,7 @@ const MainNavbar = () => {
               }}
               to="/"
             >
-              Azor
+              <h1 className="text-primary me-4">Azor</h1>
             </NavLink>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="offcanvasNavbar-expand-md" />
