@@ -26,6 +26,9 @@ app.use("/api/inquiries", customerInquiryRoutes);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
+    app.get("/", (req, res) => {
+      res.json("Hello!");
+    });
     // Listen to port
     app.listen(process.env.PORT || 2023, () => {
       console.log("listening on port", process.env.PORT);
