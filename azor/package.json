@@ -1,5 +1,5 @@
 {
-  "proxy": "https://capstone-azor-5a9x.vercel.app/",
+  "proxy": "http://localhost:2020",
   "name": "azor",
   "version": "0.1.0",
   "private": true,
