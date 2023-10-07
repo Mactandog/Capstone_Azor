@@ -24,7 +24,7 @@ const AdminEditAcoountForm = () => {
   //GET BOOKING DETAILS
   useEffect(() => {
     const getUser = async () => {
-      const response = await fetch(`/api/users/${user._id}`, {
+      const response = await fetch(`${process.env.API ?? ""}/api/users/${user._id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data

@@ -30,7 +30,7 @@ const ViewBookingModal = ({ showModal, setShowModal, booking, bookdate }) => {
       stats: stats,
     };
     console.log(status);
-    const response = await fetch(`/api/bookings/cancel/${booking._id}`, {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings/cancel/${booking._id}`, {
       method: "PATCH",
       body: JSON.stringify(status),
       headers: {

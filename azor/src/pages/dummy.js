@@ -9,7 +9,7 @@ const DummyPage = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const response = await fetch("/api/bookings"); // fetch data from the server
+      const response = await fetch(`${process.env.API ?? ""}/api/bookings`); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
 
       // check if response is ok

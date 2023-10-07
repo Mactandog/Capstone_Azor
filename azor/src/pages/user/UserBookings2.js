@@ -29,7 +29,7 @@ const UserBookings = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const response = await fetch("/api/bookings", {
+      const response = await fetch(`${process.env.API ?? ""}/api/bookings`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data

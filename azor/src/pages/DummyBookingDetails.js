@@ -6,7 +6,7 @@ const DummyBookingDetails = ({ booking }) => {
   const { dispatch } = useBookingsContext();
 
   const handleClick = async () => {
-    const response = await fetch("/bookings/" + booking._id, {
+    const response = await fetch(`${process.env.API ?? ""}/bookings/` + booking._id, {
       method: "DELETE",
     });
     const json = await response.json();

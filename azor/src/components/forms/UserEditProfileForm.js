@@ -23,7 +23,7 @@ const UserEditProfileForm = () => {
   //GET BOOKING DETAILS
   useEffect(() => {
     const getUser = async () => {
-      const response = await fetch(`/api/users/${user._id}`, {
+      const response = await fetch(`${process.env.API ?? ""}/api/users/${user._id}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
@@ -125,7 +125,7 @@ const UserEditProfileForm = () => {
       };
       console.log(userDetails);
 
-      const response = await fetch(`/api/users/update${user._id}`, {
+      const response = await fetch(`${process.env.API ?? ""}/api/users/update${user._id}`, {
         method: "PATCH",
         body: JSON.stringify(user),
         headers: {

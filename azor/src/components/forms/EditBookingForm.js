@@ -38,7 +38,7 @@ const EditBookingForm = () => {
   //GET BOOKING DETAILS
   useEffect(() => {
     const getBooking = async () => {
-      const response = await fetch(`/api/bookings/${bookingId}`, {
+      const response = await fetch(`${process.env.API ?? ""}/api/bookings/${bookingId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
@@ -177,7 +177,7 @@ const EditBookingForm = () => {
     };
     console.log(booking);
 
-    const response = await fetch(`/api/bookings/${bookingId}`, {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings/${bookingId}`, {
       method: "PATCH",
       body: JSON.stringify(booking),
       headers: {

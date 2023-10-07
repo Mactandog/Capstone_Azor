@@ -13,7 +13,7 @@ const AdminUserListTable = () => {
   console.log(users);
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await fetch("/api/users/", {
+      const response = await fetch(`${process.env.API ?? ""}/api/users/`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data

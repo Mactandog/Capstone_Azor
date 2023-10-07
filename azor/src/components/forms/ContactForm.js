@@ -31,7 +31,7 @@ const ContactForm = () => {
     };
     console.log(inquiry);
 
-    const response = await fetch("/api/inquiries/create", {
+    const response = await fetch(`${process.env.API ?? ""}/api/inquiries/create`, {
       method: "POST",
       body: JSON.stringify(inquiry),
       headers: {

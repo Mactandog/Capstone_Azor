@@ -200,7 +200,7 @@ const AddUserAdminForm = () => {
       };
       console.log(userInfo);
 
-      const response = await fetch("/api/users/create", {
+      const response = await fetch(`${process.env.API ?? ""}/api/users/create`, {
         method: "POST",
         body: JSON.stringify(userInfo),
         headers: {

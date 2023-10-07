@@ -26,7 +26,7 @@ const BookingCard = ({ booking, editBooking }) => {
       return;
     }
 
-    const response = await fetch(`${process.env.HOST}/api/bookings/${booking._id}`, {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings/${booking._id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${user.token}` },
     });

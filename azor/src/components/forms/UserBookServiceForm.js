@@ -128,7 +128,7 @@ const UserBookServiceForm = () => {
     };
     console.log(booking);
 
-    const response = await fetch("/api/bookings", {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings`, {
       method: "POST",
       body: JSON.stringify(booking),
       headers: {

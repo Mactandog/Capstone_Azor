@@ -36,7 +36,7 @@ const AdminCompleteForm = () => {
   //GET BOOKING DETAILS
   useEffect(() => {
     const getBooking = async () => {
-      const response = await fetch(`/api/bookings/admin/${bookingId}`, {
+      const response = await fetch(`${process.env.API ?? ""}/api/bookings/admin/${bookingId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       }); // fetch data from the server
       const json = await response.json(); // pass to a variable to use the data
@@ -126,7 +126,7 @@ const AdminCompleteForm = () => {
     };
     console.log(booking);
 
-    const response = await fetch(`/api/bookings/admin/${bookingId}`, {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings/admin/${bookingId}`, {
       method: "PATCH",
       body: JSON.stringify(booking),
       headers: {

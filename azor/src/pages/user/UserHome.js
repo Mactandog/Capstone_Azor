@@ -18,7 +18,7 @@ const UserHome = () => {
 
   useEffect(() => {
     const fetchBookings = async () => {
-      const response = await fetch("/api/bookings", {
+      const response = await fetch(`${process.env.API ?? ""}/api/bookings`, {
         headers: {
           Authorization: `Bearer ${user.token}`,
         },

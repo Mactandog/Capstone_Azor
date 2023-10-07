@@ -20,7 +20,7 @@ const BookServiceForm = () => {
 
     const booking = { first_name, date, time_slot };
 
-    const response = await fetch("/api/bookings", {
+    const response = await fetch(`${process.env.API ?? ""}/api/bookings`, {
       method: "POST",
       body: JSON.stringify(booking),
       headers: { "Content-Type": "application/json" },
