@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7e51bc25.css",
+    "main.js": "/static/js/main.abc20312.js",
+    "static/media/Breaks.png": "/static/media/Breaks.0c87be04afab2597eb71.png",
+    "static/media/OilChange.png": "/static/media/OilChange.d03b433f2aadb861cdb2.png",
+    "static/media/Maintenance.png": "/static/media/Maintenance.0395bb54cb7623bd8781.png",
+    "static/media/Tires.png": "/static/media/Tires.9e11d3a8dfb812f241fb.png",
+    "static/media/img4.jpeg": "/static/media/img4.e56777f52c5ec9ef588c.jpeg",
+    "static/media/break.png": "/static/media/break.6f85269383b26994a8b0.png",
+    "static/media/maintenance.png": "/static/media/maintenance.26f045cca7d2c7914df9.png",
+    "static/media/tires.png": "/static/media/tires.ffcb381e8d31cca5aa08.png",
+    "static/media/Avatar.png": "/static/media/Avatar.4cb2f4ff22a2a77f72cc.png",
+    "static/media/change-oil.png": "/static/media/change-oil.c707f028ad7d2d6a043a.png",
+    "static/media/illustatus.svg": "/static/media/illustatus.68faa0a84810d452385e8370244f5873.svg",
+    "index.html": "/index.html",
+    "main.7e51bc25.css.map": "/static/css/main.7e51bc25.css.map",
+    "main.abc20312.js.map": "/static/js/main.abc20312.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7e51bc25.css",
+    "static/js/main.abc20312.js"
+  ]
+}
