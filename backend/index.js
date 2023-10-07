@@ -1,10 +1,14 @@
 const express = require("express");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const cors = require('cors');
 
 const bookingRoutes = require("./routes/bookingsRoutes");
 const userRoutes = require("./routes/userRoutes");
 const customerInquiryRoutes = require("./routes/customerInquiryRoutes");
+
+// Allow requests from specific origins (replace with your frontend URL)
+const allowedOrigins = ['https://azor-motorcycle-services.onrender.com'];
 
 // EXPRESS APP
 const app = express();
@@ -13,11 +17,23 @@ const app = express();
 app.use(express.json());
 
 app.use((req, res, next) => {
-  // console.log(req.path, req.method);
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  console.log(req.path, req.method);
   next();
 });
+
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+
 
 // ROUTES
 app.use("/api/bookings", bookingRoutes);

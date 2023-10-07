@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import ViewBookingModal from "../../modals/ViewBookingModal";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
+
 const BookingCard = ({ booking, editBooking }) => {
   const { user } = useAuthContext();
 
@@ -25,7 +26,7 @@ const BookingCard = ({ booking, editBooking }) => {
       return;
     }
 
-    const response = await fetch(`/api/bookings/${booking._id}`, {
+    const response = await fetch(`${process.env.HOST}/api/bookings/${booking._id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${user.token}` },
     });
